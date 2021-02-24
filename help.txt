@@ -1,0 +1,12 @@
+Docker compose up and build
+docker-compose up --build
+
+Docker compose up
+docker-compose up -d
+
+Docker compose down
+docker-compose down
+
+Check docker
+docker ps
+
