@@ -10,3 +10,24 @@ docker-compose down
 Check docker
 docker ps
 
+Start Git Repo
+echo "# hero-app" >> README.md
+git init
+git add README.md
+git commit -m "first commit"
+git branch -M main
+git remote add origin https://github.com/armandoayala/hero-app.git
+git push -u origin main
+
+User/Pass Admin
+{
+    "username":"admin",
+    "password":"admin_852@"
+}
+
+User/Pass Operacion
+{
+    "username":"operacion",
+    "password":"op_12345"
+}
+

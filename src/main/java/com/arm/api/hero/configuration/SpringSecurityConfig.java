@@ -6,6 +6,9 @@ import com.arm.api.hero.auth.filter.JWTAuthorizationFilter;
 import com.arm.api.hero.auth.service.JWTService;
 import com.arm.api.hero.service.JpaUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest;
+import org.springframework.boot.actuate.health.HealthEndpoint;
+import org.springframework.boot.actuate.info.InfoEndpoint;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -49,6 +52,9 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                         "/**/*.css",
                         "/**/*.js"
                 ).permitAll()
+                .requestMatchers(EndpointRequest.to(HealthEndpoint.class,
+                        InfoEndpoint.class))
+                .permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .addFilter(new JWTAuthenticationFilter(authenticationManager(), jwtService))
