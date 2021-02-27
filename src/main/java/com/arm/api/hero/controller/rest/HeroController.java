@@ -4,6 +4,7 @@ import com.arm.api.hero.aop.AuditableOperationRestApi;
 import com.arm.api.hero.controller.BaseController;
 import com.arm.api.hero.model.dto.request.CreateHeroReq;
 import com.arm.api.hero.model.dto.request.UpdateHeroReq;
+import com.arm.api.hero.model.dto.response.CacheableHeroResp;
 import com.arm.api.hero.model.dto.response.CreateHeroResp;
 import com.arm.api.hero.model.dto.response.GenericResp;
 import com.arm.api.hero.model.dto.response.GetAllHeroesResp;
@@ -92,7 +93,7 @@ public class HeroController extends BaseController {
             @RequestBody UpdateHeroReq req) {
         GenericResp genericResp = new GenericResp();
         try {
-            UpdateHeroResp result = service.update(id, req);
+            CacheableHeroResp result = service.update(id, req);
             genericResp.setResult(result);
 
             return new ResponseEntity<>(genericResp, HttpStatus.OK);
@@ -178,7 +179,7 @@ public class HeroController extends BaseController {
             @PathVariable("id") long id) {
         GenericResp genericResp = new GenericResp();
         try {
-            GetHeroeByIdResp result = service.getById(id);
+            CacheableHeroResp result = service.getById(id);
             genericResp.setResult(result);
             return new ResponseEntity<>(genericResp, HttpStatus.OK);
         } catch (Exception ex) {

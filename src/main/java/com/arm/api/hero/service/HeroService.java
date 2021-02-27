@@ -6,16 +6,18 @@ import com.arm.api.hero.exception.NotFoundException;
 import com.arm.api.hero.model.bo.Hero;
 import com.arm.api.hero.model.dto.request.CreateHeroReq;
 import com.arm.api.hero.model.dto.request.UpdateHeroReq;
+import com.arm.api.hero.model.dto.response.CacheableHeroResp;
 import com.arm.api.hero.model.dto.response.CreateHeroResp;
 import com.arm.api.hero.model.dto.response.GetAllHeroesResp;
-import com.arm.api.hero.model.dto.response.GetHeroeByIdResp;
-import com.arm.api.hero.model.dto.response.UpdateHeroResp;
 import com.arm.api.hero.model.support.ValidationErrorSet;
 import com.arm.api.hero.repository.HeroRepository;
 import com.arm.api.hero.util.Constant;
 import org.dozer.DozerBeanMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -53,7 +55,8 @@ public class HeroService {
         return mapper.map(hero, CreateHeroResp.class);
     }
 
-    public UpdateHeroResp update(Long id, UpdateHeroReq req) {
+    @CachePut(value = "cache-hero", key = "#id")
+    public CacheableHeroResp update(Long id, UpdateHeroReq req) {
         ValidationErrorSet validationErrorSet = validationComponent.validate(req);
         if (validationErrorSet.hasError()) {
             throw new DataValidationException(validationErrorSet.toString());
@@ -78,10 +81,11 @@ public class HeroService {
         hero.setDescription(req.getDescription());
 
         hero = repository.save(hero);
-        return mapper.map(hero, UpdateHeroResp.class);
+        return mapper.map(hero, CacheableHeroResp.class);
 
     }
 
+    @CacheEvict(value = "cache-hero", allEntries = true)
     public void deleteById(Long id) {
 
         if (id == null || id < 1) {
@@ -98,15 +102,16 @@ public class HeroService {
         return resp;
     }
 
-    public GetHeroeByIdResp getById(Long id) {
+    @Cacheable(value = "cache-hero", key = "#id")
+    public CacheableHeroResp getById(Long id) throws InterruptedException {
 
         if (id == null || id < 1) {
             throw new DataValidationException("Id cannot be less than 1");
         }
-
+        Thread.sleep(3000);
         Hero hero = repository.findById(id).orElse(null);
         if (hero != null) {
-            return mapper.map(hero, GetHeroeByIdResp.class);
+            return mapper.map(hero, CacheableHeroResp.class);
         }
 
         return null;

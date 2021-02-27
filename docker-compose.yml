@@ -6,6 +6,17 @@ services:
     build: .
     ports:
       - "8082:8082"
+    links:
+      - redis
+    depends_on:
+      - redis
+    networks:
+      - app-network
+  redis:
+    container_name: redis
+    image: "redis:alpine"
+    ports:
+      - "6379:6379"
     networks:
       - app-network
 
